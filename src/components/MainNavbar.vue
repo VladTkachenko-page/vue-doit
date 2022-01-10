@@ -110,7 +110,7 @@ export default {
 .burger-menu {
   transition: all 0.3s;
   position: absolute;
-  overflow: hidden;
+  overflow: auto;
   padding-top: 80px;
   margin: 0;
   left: 0;
