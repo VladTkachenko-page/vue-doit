@@ -1,16 +1,6 @@
 <template>
-  <div
-    class="home"
-    :style="{
-      'background-image': `url(${require('@/assets/img/main_bg.jpg')})`,
-    }"
-  >
-    <div
-      class="home__offer"
-      :style="{
-        'background-image': `url(${require('@/assets/img/offer_bg.svg')})`,
-      }"
-    >
+  <div class="home">
+    <div class="home__offer" v-if="!user">
       <h1 class="home__title">DOIT <span class="hide">BETA</span></h1>
       <div class="home__text">
         Prepare for your esports career and get ready for awesome tournaments
@@ -30,13 +20,27 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import MainButtons from "@/components/default/MainButtons.vue";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
-  name: "Home",
+  data() {
+    return {
+      auth: getAuth(),
+      user: false,
+    };
+  },
   components: {
     MainButtons,
+  },
+  async mounted() {
+    await onAuthStateChanged(this.auth, (user) => {
+      if (user) {
+        this.user = true;
+      } else {
+        this.user = false;
+      }
+    });
   },
 };
 </script>
@@ -45,6 +49,7 @@ export default {
   background-repeat: repeat;
   padding-top: 60px;
   padding-bottom: 30px;
+  background-image: url("~@/assets/img/main_bg.jpg");
 }
 .home__offer {
   text-align: center;
@@ -54,6 +59,7 @@ export default {
   padding-bottom: 410px;
   padding-top: 210px;
   margin-bottom: 25px;
+  background-image: url("~@/assets/img/offer_bg.svg");
 }
 .home__title {
   color: #fff;
@@ -74,9 +80,9 @@ export default {
   justify-content: center;
   gap: 10px;
 }
-@media (max-width: 992px) {
+@media (max-width: 1100px) {
   .home__offer {
-    padding: 150px 0 50px 0;
+    padding: 50px 0;
   }
   .home__title {
     font-size: 84px;

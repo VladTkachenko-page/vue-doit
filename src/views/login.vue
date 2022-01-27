@@ -40,6 +40,7 @@
         <input
           id="password"
           placeholder="Password"
+          type="password"
           v-model="v$.password.$model"
         />
         <div class="default-input__times">&times;</div>
@@ -124,10 +125,19 @@ export default {
   },
 
   methods: {
+    
     async submit() {
+      const formData = {
+        email: this.email,
+        password: this.password,
+      };
       if (this.v$.$invalid) {
         this.v$.$touch();
         return;
+      } else {
+        
+        await this.$store.dispatch("login", formData);
+        this.$router.push("/");
       }
     },
   },

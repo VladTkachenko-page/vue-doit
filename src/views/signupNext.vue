@@ -1,4 +1,3 @@
-,
 <template>
   <div class="sign-up">
     <div class="logo">
@@ -129,7 +128,7 @@
           <span class="default-checkbox__box"></span
           ><span class="default-checkbox__label sign-up__label"
             >I’m have at least 13 years of age and agree to the
-            <router-link class="sign-up__link" to="/termsofuse"
+            <router-link class="sign-up__link" to="/terms"
               >terms of service</router-link
             >
           </span>
@@ -170,6 +169,7 @@ export default {
       masks: {
         input: "DD-MM-YYYY",
       },
+      age: "",
     };
   },
 
@@ -200,22 +200,76 @@ export default {
   },
 
   methods: {
+    async getAge() {
+      var now = new Date(); //Текущя дата
+      var today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); //Текущя дата без времени
+      var dob = new Date(
+        this.date.getFullYear(),
+        this.date.getMonth(),
+        this.date.getDate()
+      ); //Дата рождения
+      var dobnow = new Date(today.getFullYear(), dob.getMonth(), dob.getDate()); //ДР в текущем году
+
+      //Возраст = текущий год - год рождения
+      this.age = today.getFullYear() - dob.getFullYear();
+      //Если ДР в этом году ещё предстоит, то вычитаем из age один год
+      if (today < dobnow) {
+        this.age--;
+      }
+    },
     async submit() {
       if (this.v$.$invalid) {
         this.v$.$touch();
         return;
       }
+      await this.getAge();
       const user = {
         login: this.login,
         country: this.country,
         email: this.$route.params.email,
         password: this.$route.params.password,
-        birthday: this.date,
+        birthday: `${
+          this.date.getMonth() + 1
+        }.${this.date.getDate()}.${this.date.getFullYear()}`,
+        id: new Date().getTime(),
+        emailVerification: false,
+        name: "",
+        sex: "",
+        age: this.age,
+        dateRegistration: `${new Date().getDate()}.${
+          new Date().getMonth() + 1
+        }.${new Date().getFullYear()}`,
+        img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9Hxl27ICVZe3WiMlgQcnCS78IGwCgoPHCpg&usqp=CAU",
+        lvl: 0,
+        results: [
+          {
+            gameName: "StarCraft II",
+            gameColor: "#55AAFF",
+            value: 15,
+          },
+          {
+            gameName: "League of Legends",
+            gameColor: "#55FF8F",
+            value: 3,
+          },
+          {
+            gameName: "Hearthstone",
+            gameColor: "#B455FF",
+            value: 2,
+          },
+          {
+            gameName: "World of Tanks",
+            gameColor: "#FF9255",
+            value: 1,
+          },
+        ],
+        eur: 0,
+        dtc: 0,
+        subscribe: "free",
       };
       try {
         await this.$store.dispatch("register", user);
-        alert("Вы успешно зарегистрировались");
-        this.$router.push("/");
+        this.$router.push("/verify");
       } catch (e) {
         const eMessage = e.message;
         alert(eMessage);
@@ -228,7 +282,6 @@ export default {
       if (item.textContent.length > 25)
         item.textContent = item.textContent.substring(0, 25) + "...";
     });
-    console.log(this.$route.params);
     if (Object.keys(this.$route.params).length === 0) {
       this.$router.push("/signup");
     }
@@ -279,9 +332,7 @@ form {
 .terms {
   min-width: 264px;
 }
-.default-input__icon {
-  position: absolute;
-  padding: 9px;
-  right: 0;
+.default-country-select_style {
+  width: 264px;
 }
 </style>

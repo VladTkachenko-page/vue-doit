@@ -52,41 +52,41 @@ export default {
 <style scoped>
 nav {
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
-  z-index: 100;
   overflow: hidden;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  background: #0f1215;
-  height: 55px;
-  width: 100%;
-  border-top: 1px solid #20252b;
+  width: 112px;
+  height: 100vh;
+  border-right: 1px solid #20252b;
 }
 nav .link :hover {
-  transition: all .3s;
+  transition: all 0.3s;
   transform: scale(1.2);
 }
 nav .link .link__icon {
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 32px;
   flex-grow: 0;
 }
-
-@media (min-width: 993px) {
+@media (max-width: 1100px) {
   nav {
-    top: 0;
-    flex-direction: column;
+    top: auto;
+    bottom: 0;
+    z-index: 100;
+    flex-direction: row;
     align-items: center;
-    width: 112px;
-    height: 100vh;
-    border-right: 1px solid #20252b;
+    background: #0f1215;
+    height: 55px;
+    width: 100%;
+    border-top: 1px solid #20252b;
   }
   nav .link .link__icon {
-    width: 32px;
-    height: 32px;
+    width: 22px;
+    height: 22px;
     flex-grow: 0;
   }
 }

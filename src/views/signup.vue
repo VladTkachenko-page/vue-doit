@@ -40,6 +40,7 @@
         <input
           id="password"
           placeholder="Password"
+          type="password"
           v-model="v$.password.$model"
         />
         <div class="default-input__times">&times;</div>
@@ -94,8 +95,10 @@
 import useVuelidate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
 import MainButtons from "@/components/default/MainButtons.vue";
+import { mapGetters } from "vuex";
 
 export default {
+  computed: mapGetters(["getAllUsers"]),
   setup: () => ({ v$: useVuelidate() }),
   data() {
     return {
@@ -127,15 +130,30 @@ export default {
         this.v$.$touch();
         return;
       } else {
-        this.$router.push({
-          name: "signUpNext",
-          params: {
-            email: this.email,
-            password: this.password,
-          },
-        });
+        let checkEmail = "";
+        for (let key in this.getAllUsers) {
+          if (this.getAllUsers[key].email === this.email) {
+            checkEmail = this.getAllUsers[key].email
+          }
+        }
+        if (checkEmail === this.email) {
+          return this.$toast.error(
+            `User with this email: ${this.email} already exists`
+          );
+        } else {
+          this.$router.push({
+            name: "signUpNext",
+            params: {
+              email: this.email,
+              password: this.password,
+            },
+          });
+        }
       }
     },
+  },
+  async mounted() {
+    await this.$store.dispatch("fetchUser");
   },
 };
 </script>

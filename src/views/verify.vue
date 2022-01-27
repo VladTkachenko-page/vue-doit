@@ -11,7 +11,9 @@
       to&nbsp;continue verify your email
     </p>
     <p>
-      <MainButtons class="forgot__btn" type="submit">Verify email</MainButtons>
+      <MainButtons @click="verify" class="forgot__btn" type="submit"
+        >Verify email</MainButtons
+      >
     </p>
     <p class="verify__text">
       This is an automated email. <br />
@@ -22,6 +24,8 @@
 
 <script>
 import MainButtons from "@/components/default/MainButtons.vue";
+import { getAuth, sendEmailVerification } from "firebase/auth";
+import { getDatabase, ref, update } from "firebase/database";
 
 export default {
   data() {
@@ -32,7 +36,19 @@ export default {
     MainButtons,
   },
 
-  methods: {},
+  methods: {
+    async verify() {
+      const auth = getAuth();
+      await sendEmailVerification(auth.currentUser).then(() => {
+        const db = getDatabase();
+        update(ref(db, "users/" + auth.currentUser.uid), {
+          emailVerification: true,
+        });
+        this.$toast.success("Email send");
+        this.$router.push("/");
+      });
+    },
+  },
 };
 </script>
 
