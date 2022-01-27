@@ -32,19 +32,30 @@ body {
   margin: 0 auto;
   padding: 0 15px 0 125px;
 }
-@media (max-width: 992px) {
+@media (max-width: 1100px) {
   .container {
-    padding: 0 15px 40px;
+    padding: 0 15px 80px;
   }
 }
-
+/* title */
+.title {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 100%;
+  color: #f5f5f5;
+  text-align: center;
+}
+.gray {
+  color: #67707a;
+}
+.white {
+  color: #fff;
+}
 /*default-input*/
 
 .default-input {
   position: relative;
   width: 100%;
-  min-width: 240px;
-  height: 60px;
 }
 .default-input label {
   font-size: 14px;
@@ -59,6 +70,7 @@ body {
   border: 1px solid #16263d;
   box-sizing: border-box;
   border-radius: 2px;
+  background-color: #0f1215;
 }
 .default-input input::placeholder {
   font-family: "Rubik";
@@ -151,12 +163,20 @@ body {
 .default-input__success .default-input__message {
   display: none;
 }
+.default-input__icon {
+  position: absolute;
+  padding: 9px;
+  right: 0;
+}
 
 /*default-country-select */
 
 .default-country-select {
   min-width: 160px;
   width: 100%;
+}
+.default-country-select_style option {
+  max-width: 260px;
 }
 .default-country-select_style {
   margin-top: 6px;
@@ -167,7 +187,7 @@ body {
   background: #0f1215;
   border-radius: 2px;
   border: 1px solid #1c2f4d;
-  width: 264px;
+  width: 100%;
   max-height: 224px;
   height: 38px;
 }
