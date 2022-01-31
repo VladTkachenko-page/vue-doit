@@ -146,7 +146,7 @@
           >
           <MainButtons
             v-else
-            @click="this.$router.push('/user/team')"
+            @click.prevent="showModal = true"
             class="create-team__form-btn secondary"
             >Delete Team</MainButtons
           >
@@ -160,6 +160,22 @@
       </form>
     </div>
   </UserLayout>
+  <modal v-if="showModal" @close="showModal = false">
+    <template v-slot:header>
+      <h1>Delete Team</h1>
+    </template>
+    <template v-slot:body>
+      <p>Are you sure you want to delete {{ getTeam.name }}?</p>
+    </template>
+    <template v-slot:footer>
+      <div class="edit-team__btn" @click="showModal = false">
+        <MainButtons class="secondary">No</MainButtons>
+      </div>
+      <div class="edit-team__btn" @click="deleteTeam">
+        <MainButtons>Yes</MainButtons>
+      </div>
+    </template>
+  </modal>
 </template>
 
 <script>
@@ -169,9 +185,8 @@ import MainButtons from "@/components/default/MainButtons.vue";
 import useVuelidate from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import UserLayout from "@/layouts/UserLayout.vue";
-import { db, refDb, updateDb } from "@/firebase.js";
-
-// import { getDatabase, ref, update } from "firebase/database";
+import { db, refDb, updateDb, removeDb } from "@/firebase.js";
+import modal from "@/components/modal.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
@@ -181,6 +196,7 @@ export default {
     UserLayout,
     MainButtons,
     DefaultFileinput,
+    modal,
   },
 
   data() {
@@ -196,6 +212,7 @@ export default {
       players: {},
       date: "",
       imgSRC: "",
+      showModal: false,
     };
   },
 
@@ -272,6 +289,24 @@ export default {
         }
         this.$router.push("/user/team");
       }
+    },
+    async deleteTeam() {
+      try {
+        const team = {
+          id: this.id,
+          imgSRC: this.imgSRC,
+        };
+        await this.$store.dispatch("deleteTeam", team);
+      } catch (e) {
+        return this.$toast.error(e);
+      }
+      try {
+        await removeDb(refDb(db, `users/${this.getUser.uid}/teams/${this.id}`));
+      } catch (e) {
+        return this.$toast.error(e);
+      }
+      this.$toast.success("Team has been deleted");
+      this.$router.push("/user/team");
     },
     getDateNow() {
       const dateObj = new Date();
