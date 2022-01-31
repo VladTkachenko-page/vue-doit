@@ -1,5 +1,11 @@
-import { db, refDb, onValueDb, updateDb } from "../../firebase.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, refDb, onValueDb, updateDb, removeDb } from "../../firebase.js";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 
 export default {
   state: {
@@ -27,7 +33,9 @@ export default {
         const storage = getStorage();
         const storageRef = ref(storage, `teams/${teamData.id}/` + teamData.id);
         await uploadBytes(storageRef, teamData.img);
-        await getDownloadURL(ref(storage, `teams/${teamData.id}/` + teamData.id))
+        await getDownloadURL(
+          ref(storage, `teams/${teamData.id}/` + teamData.id)
+        )
           .then((url) => {
             updateDb(refDb(db, "teams/" + teamData.id), {
               imgSRC: url,
@@ -36,6 +44,22 @@ export default {
           .catch((error) => {
             console.log("error: ", error);
             // Handle any errors
+          });
+      }
+    },
+    async deleteTeam({ commit }, teamData) {
+      try {
+        removeDb(refDb(db, "teams/" + teamData.id));
+      } catch (e) {
+        commit("error", e);
+      }
+      if (teamData.imgSRC) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `teams/${teamData.id}/` + teamData.id);
+        await deleteObject(storageRef)
+          .then(() => {})
+          .catch((error) => {
+            console.log("error: ", error);
           });
       }
     },
