@@ -7,7 +7,7 @@
           class="team__item"
           v-for="item in getUser.teams"
           :key="item.id"
-          @click="this.$router.push(`/user/team/${item.id}`)"
+          @click="this.$router.push(`/user/team/manage/${item.id}`)"
         >
           {{ item.name }}
         </div>
