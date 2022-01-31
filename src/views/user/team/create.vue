@@ -129,6 +129,14 @@
           <div class="create-team__form-url">doit.gg/team/{{ this.id }}</div>
         </div>
         <div class="create-team__form-wrap">
+          <div class="create-team__form-title">Players</div>
+          <div class="create-team__players">
+            <div class="create-team__players-btn" @click="setListType">
+              List of players
+            </div>
+          </div>
+        </div>
+        <div class="create-team__form-wrap">
           <div class="create-team__form-title">Advance info</div>
           <p class="create-team__form-text">Logo 128x128</p>
           <DefaultFileinput
@@ -162,10 +170,37 @@
   </UserLayout>
   <modal v-if="showModal" @close="showModal = false">
     <template v-slot:header>
-      <h1>Delete Team</h1>
+      <h1 v-if="listPlayer">List of players</h1>
+      <h1 v-else>Delete Team</h1>
     </template>
     <template v-slot:body>
-      <p>Are you sure you want to delete {{ getTeam.name }}?</p>
+      <div class="create-team__players-list" v-if="listPlayer">
+        <div class="create-team__players-list-item">
+          <div class="create-team__players-list-item-id">ID</div>
+          <div class="create-team__players-list-item-name">Name</div>
+          <div class="create-team__players-list-item-delete">Remove</div>
+        </div>
+        <div
+          class="create-team__players-list-item"
+          v-for="item in updatedPlayers || players"
+          :key="item.id"
+        >
+          <div class="create-team__players-list-item-id">
+            {{ item.id }}
+          </div>
+          <div class="create-team__players-list-item-name">
+            {{ item.name }}
+          </div>
+          <div
+            class="create-team__players-list-item-delete edit"
+            @click="deletePlayer(item.id)"
+          >
+            x
+          </div>
+        </div>
+        <MainButtons class="create-team__players-list-btn">Add</MainButtons>
+      </div>
+      <p v-else>Are you sure you want to delete {{ getTeam.name }}?</p>
     </template>
     <template v-slot:footer>
       <div class="edit-team__btn" @click="showModal = false">
@@ -213,6 +248,8 @@ export default {
       date: "",
       imgSRC: "",
       showModal: false,
+      updatedPlayers: "",
+      listPlayer: false,
     };
   },
 
@@ -323,6 +360,10 @@ export default {
     uploadImg(img) {
       this.img = img;
     },
+    setListType() {
+      this.listPlayer = !this.listPlayer;
+      this.showModal = !this.showModal;
+    },
   },
 };
 </script>
@@ -372,5 +413,31 @@ export default {
 .default-input .default-input__checkmark,
 .default-input .default-input__times {
   top: 0;
+}
+.create-team__players-btn {
+  color: #0a61e1;
+  font-weight: 700;
+  padding: 12px 16px;
+  background-color: #1a222d;
+  cursor: pointer;
+  max-width: 150px;
+}
+.create-team__players-list {
+  margin-top: 10px;
+}
+.create-team__players-list-item {
+  display: grid;
+  text-align: center;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.create-team__players-list-item-delete.create {
+  color: red;
+  max-width: 10px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+.create-team__players-list-btn {
+  margin-top: 20px;
+  margin: 0 auto;
 }
 </style>
