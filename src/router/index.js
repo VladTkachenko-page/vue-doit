@@ -146,6 +146,20 @@ const routes = [
     props: true,
     component: () => import("@/views/user/team/create.vue"),
   },
+  {
+    path: "/user/team/manage/:id",
+    name: "user-team-manage",
+    meta: { layout: "main" },
+    props: true,
+    component: () => import("@/views/user/team/manage.vue"),
+  },
+  {
+    path: "/user/team/:id/addPlayers",
+    name: "user-team-addPlayers",
+    meta: { layout: "main" },
+    props: true,
+    component: () => import("@/views/user/team/add-players.vue"),
+  },
 ];
 
 const router = createRouter({
