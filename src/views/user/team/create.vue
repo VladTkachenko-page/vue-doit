@@ -128,13 +128,18 @@
           <p class="create-team__form-text">URL</p>
           <div class="create-team__form-url">doit.gg/team/{{ this.id }}</div>
         </div>
-        <div class="create-team__form-wrap">
+        <div class="create-team__form-wrap" v-if="getTeam">
           <div class="create-team__form-title">Players</div>
           <div class="create-team__players">
             <div class="create-team__players-btn" @click="toggleList">
               List of players
             </div>
-            <div class="create-team__players-btn" @click="this.$router.push(`/user/team/${this.getTeam.id}/players`)">
+            <div
+              class="create-team__players-btn"
+              @click="
+                this.$router.push(`/user/team/${this.getTeam.id}/players`)
+              "
+            >
               Edit list of players
             </div>
           </div>
