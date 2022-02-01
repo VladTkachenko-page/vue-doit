@@ -154,11 +154,11 @@ const routes = [
     component: () => import("@/views/user/team/manage.vue"),
   },
   {
-    path: "/user/team/:id/addPlayers",
-    name: "user-team-addPlayers",
+    path: "/user/team/:id/players",
+    name: "user-team-players",
     meta: { layout: "main" },
     props: true,
-    component: () => import("@/views/user/team/add-players.vue"),
+    component: () => import("@/views/user/team/players.vue"),
   },
 ];
 
