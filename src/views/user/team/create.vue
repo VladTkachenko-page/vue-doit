@@ -131,8 +131,11 @@
         <div class="create-team__form-wrap">
           <div class="create-team__form-title">Players</div>
           <div class="create-team__players">
-            <div class="create-team__players-btn" @click="setListType">
+            <div class="create-team__players-btn" @click="toggleList">
               List of players
+            </div>
+            <div class="create-team__players-btn" @click="this.$router.push(`/user/team/${this.getTeam.id}/players`)">
+              Edit list of players
             </div>
           </div>
         </div>
@@ -168,7 +171,7 @@
       </form>
     </div>
   </UserLayout>
-  <modal v-if="showModal" @close="showModal = false">
+  <modal v-if="showModal" @close="closeModal">
     <template v-slot:header>
       <h1 v-if="listPlayer">List of players</h1>
       <h1 v-else>Delete Team</h1>
@@ -178,32 +181,29 @@
         <div class="create-team__players-list-item">
           <div class="create-team__players-list-item-id">ID</div>
           <div class="create-team__players-list-item-name">Name</div>
-          <div class="create-team__players-list-item-delete">Remove</div>
         </div>
         <div
           class="create-team__players-list-item"
-          v-for="item in updatedPlayers || players"
+          v-for="item in getTeam.players"
           :key="item.id"
         >
           <div class="create-team__players-list-item-id">
             {{ item.id }}
           </div>
           <div class="create-team__players-list-item-name">
-            {{ item.name }}
-          </div>
-          <div
-            class="create-team__players-list-item-delete edit"
-            @click="deletePlayer(item.id)"
-          >
-            x
+            {{ item.login }}
           </div>
         </div>
-        <MainButtons class="create-team__players-list-btn">Add</MainButtons>
       </div>
       <p v-else>Are you sure you want to delete {{ getTeam.name }}?</p>
     </template>
-    <template v-slot:footer>
-      <div class="edit-team__btn" @click="showModal = false">
+    <template v-slot:footer v-if="listPlayer">
+      <div class="edit-team__btn" @click="closeModal">
+        <MainButtons>OK</MainButtons>
+      </div>
+    </template>
+    <template v-slot:footer v-else>
+      <div class="edit-team__btn" @click="closeModal">
         <MainButtons class="secondary">No</MainButtons>
       </div>
       <div class="edit-team__btn" @click="deleteTeam">
@@ -360,9 +360,13 @@ export default {
     uploadImg(img) {
       this.img = img;
     },
-    setListType() {
+    toggleList() {
       this.listPlayer = !this.listPlayer;
       this.showModal = !this.showModal;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.listPlayer = false;
     },
   },
 };
@@ -421,6 +425,7 @@ export default {
   background-color: #1a222d;
   cursor: pointer;
   max-width: 150px;
+  text-align: center;
 }
 .create-team__players-list {
   margin-top: 10px;
@@ -428,16 +433,18 @@ export default {
 .create-team__players-list-item {
   display: grid;
   text-align: center;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
 }
-.create-team__players-list-item-delete.create {
-  color: red;
-  max-width: 10px;
-  margin: 0 auto;
-  cursor: pointer;
+.create-team__players-list-item:first-child {
+  color: #627ca3;
 }
 .create-team__players-list-btn {
   margin-top: 20px;
   margin: 0 auto;
+}
+.create-team__players {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 </style>
