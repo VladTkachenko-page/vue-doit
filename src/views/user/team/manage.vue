@@ -8,11 +8,6 @@
         >
         <router-link
           class="manage-team__item"
-          :to="`/user/team/${this.id}/addPlayers`"
-          >Add Players</router-link
-        >
-        <router-link
-          class="manage-team__item"
           :to="`/user/team/${this.id}/players`"
           >Players</router-link
         >
