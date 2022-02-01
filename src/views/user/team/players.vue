@@ -165,10 +165,10 @@ export default {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 64px;
+  gap: 35px;
 }
 .players__item {
-  padding: 30px 15px;
+  padding: 10px 15px;
   min-width: 230px;
   border: 2px solid #20252b;
   font-size: 22px;
@@ -180,9 +180,10 @@ export default {
 }
 .players__delete {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 10px;
   cursor: pointer;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .players-list {
   margin-top: 10px;
@@ -192,12 +193,6 @@ export default {
   text-align: center;
   grid-template-columns: 1fr 1fr 1fr;
   margin-bottom: 10px;
-}
-.players-list-item-delete.create {
-  color: red;
-  max-width: 10px;
-  margin: 0 auto;
-  cursor: pointer;
 }
 .players-list-btn {
   margin-top: 20px;
