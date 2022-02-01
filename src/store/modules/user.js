@@ -17,6 +17,13 @@ export default {
         context.commit("setAllUsers", data);
       });
     },
+    async fetchUsers(context) {
+      const dbRef = refDb(db, "users");
+      onValueDb(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        context.commit("setAllUsers", data);
+      });
+    },
     async updateUser({ commit }, userData) {
       try {
         updateDb(refDb(db, "users/" + userData.uid), {
