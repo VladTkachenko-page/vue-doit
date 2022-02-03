@@ -160,6 +160,19 @@ const routes = [
     props: true,
     component: () => import("@/views/user/team/players.vue"),
   },
+  {
+    path: "/leagues",
+    name: "leagues",
+    meta: { layout: "main" },
+    component: () => import("@/views/leagues/index.vue"),
+  },
+  {
+    path: "/leagues/:game",
+    name: "leagues-game",
+    meta: { layout: "main" },
+    props: true,
+    component: () => import("@/views/leagues/game.vue"),
+  },
 ];
 
 const router = createRouter({
