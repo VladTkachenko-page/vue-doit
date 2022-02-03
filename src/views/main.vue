@@ -16,22 +16,72 @@
         >
       </div>
     </div>
+    <div class="home__items home__games">
+      <div class="home__items-title title">Games</div>
+      <DefaultSlider>
+        <template v-slot:slide>
+          <swiper-slide
+            class="home__items-slide"
+            v-for="item in games"
+            :key="item.id"
+          >
+            <div class="game-card">
+              <div class="game-card__img">
+                <img src="../assets/img/dota.jpg" alt="" />
+                <span class="game-card__caption">{{ item.title }}</span>
+              </div>
+            </div>
+          </swiper-slide>
+        </template>
+      </DefaultSlider>
+    </div>
   </div>
 </template>
 
 <script>
 import MainButtons from "@/components/default/MainButtons.vue";
+import DefaultSlider from "@/components/default/DefaultSlider.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { SwiperSlide } from "swiper/vue/swiper-vue";
 
 export default {
   data() {
     return {
       auth: getAuth(),
       user: false,
+      games: [
+        {
+          id: 1,
+          title: "Dota II",
+          src: "../src/assets/img/dota.jpg",
+        },
+        {
+          id: 2,
+          title: "CS:GO",
+        },
+        {
+          id: 3,
+          title: "StarCraft II",
+        },
+        {
+          id: 4,
+          title: "WarCraft III",
+        },
+        {
+          id: 5,
+          title: "FIFA 2020",
+        },
+        {
+          id: 6,
+          title: "Valorant",
+        },
+      ],
     };
   },
   components: {
     MainButtons,
+    DefaultSlider,
+    SwiperSlide,
   },
   async mounted() {
     await onAuthStateChanged(this.auth, (user) => {
@@ -80,6 +130,32 @@ export default {
   justify-content: center;
   gap: 10px;
 }
+.game-card {
+  width: 387px;
+  max-height: 500px;
+  height: 100%;
+  cursor: pointer;
+}
+.game-card__img {
+  position: relative;
+  max-width: 387px;
+  max-height: 500px;
+}
+.game-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.game-card__caption {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 100%;
+}
 @media (max-width: 1100px) {
   .home__offer {
     padding: 50px 0;
@@ -92,6 +168,25 @@ export default {
   }
   .hide {
     display: none;
+  }
+}
+@media (max-width: 749px) {
+  .game-card {
+    margin: 0 auto;
+    width: 100%;
+    height: 204px;
+  }
+  .game-card__img {
+    max-width: 100%;
+    max-height: 204px;
+    height: 204px;
+  }
+  .game-card__img img {
+    object-position: 30% 30%;
+  }
+  .game-card__caption {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>
