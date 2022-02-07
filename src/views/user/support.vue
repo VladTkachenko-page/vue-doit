@@ -3,42 +3,22 @@
     <div class="support">
       <h2 class="support__title title">Support</h2>
       <form class="support__form" @submit.prevent="submit">
-        <div
-          class="default-input"
-          :class="{
-            'default-input__invalid': v$.name.$dirty && v$.name.$error,
-            'default-input__success': v$.name.$dirty && !v$.name.$error,
-          }"
-        >
-          <input id="name" placeholder="Name" v-model="v$.name.$model" />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.name.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
-        <div
-          class="default-input"
-          :class="{
-            'default-input__invalid': v$.topic.$dirty && v$.topic.$error,
-            'default-input__success': v$.topic.$dirty && !v$.topic.$error,
-          }"
-        >
-          <input id="topic" placeholder="Topic" v-model="v$.topic.$model" />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.topic.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
+        <DefaultInput
+          :id="'name'"
+          :placeholder="'Name'"
+          :invalid="v$.name.$dirty && v$.name.$error"
+          :success="v$.name.$dirty && !v$.name.$error"
+          :errorMessage="v$.name.$errors"
+          @updateField="updateName"
+        />
+        <DefaultInput
+          :id="'topic'"
+          :placeholder="'Topic'"
+          :invalid="v$.topic.$dirty && v$.topic.$error"
+          :success="v$.topic.$dirty && !v$.topic.$error"
+          :errorMessage="v$.topic.$errors"
+          @updateField="updateTopic"
+        />
         <DefaultTextarea
           type="text"
           placeholder="Your problem..."
@@ -61,6 +41,7 @@ import { required, minLength } from "@vuelidate/validators";
 import UserLayout from "@/layouts/UserLayout.vue";
 import { getDatabase, ref, update } from "firebase/database";
 import { mapGetters } from "vuex";
+import DefaultInput from "@/components/default/DefaultInput.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
@@ -94,6 +75,7 @@ export default {
     UserLayout,
     MainButtons,
     DefaultTextarea,
+    DefaultInput
   },
 
   methods: {
@@ -125,9 +107,11 @@ export default {
     updateProblem(field) {
       this.problem = field;
     },
-    uploadImg(img) {
-      console.log(1);
-      console.log("img: ", img);
+    updateTopic(field) {
+      this.topic = field;
+    },
+    updateName(field) {
+      this.name = field;
     },
   },
 };
@@ -136,7 +120,7 @@ export default {
 <style scoped>
 .support {
   max-width: 100%;
-  margin: 0 auto;
+  margin: 0 auto; 
 }
 .support__title {
   text-align: center;

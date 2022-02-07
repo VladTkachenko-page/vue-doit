@@ -4,13 +4,12 @@
       <div class="games__search_title title">
         <h3>Games</h3>
       </div>
-      <div class="default-input games__search_input">
-        <input
-          id="searchGame"
-          placeholder="Search the game"
-          v-model="searchGame"
-        />
-      </div>
+      <DefaultInput
+        class="games__search_input"
+        :id="'searchGame'"
+        :placeholder="'Search the game'"
+        @updateField="updateSearchGame"
+      />
     </div>
 
     <div class="games__wrap">
@@ -28,6 +27,8 @@
 </template>
 
 <script>
+import DefaultInput from "@/components/default/DefaultInput.vue";
+
 export default {
   data() {
     return {
@@ -73,9 +74,16 @@ export default {
     },
   },
 
+  components: {
+    DefaultInput,
+  },
   mounted() {},
 
-  methods: {},
+  methods: {
+    updateSearchGame(field) {
+      this.searchGame = field;
+    },
+  },
 };
 </script>
 

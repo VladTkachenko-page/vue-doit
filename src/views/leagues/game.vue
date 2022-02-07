@@ -161,9 +161,7 @@
         </template>
       </default-slider>
       <!-- <div class="leagues__not-found" v-else>Leagues not found!</div> -->
-      <router-link
-        class="leagues__more"
-        :to="`/leagues/${game}/more`"
+      <router-link class="leagues__more" :to="`/leagues/${game}/more`"
         >More</router-link
       >
       <div class="leagues__news-title">News</div>

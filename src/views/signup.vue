@@ -6,53 +6,25 @@
     </div>
     <h2 class="sign-up__title">Sign up 1/2</h2>
     <form autocomplete="off" @submit.prevent="submit">
-      <div
-        class="default-input"
-        :class="{
-          'default-input__invalid': v$.email.$dirty && v$.email.$error,
-          'default-input__success': v$.email.$dirty && !v$.email.$error,
-        }"
-      >
-        <label for="email"> Email </label>
-        <input
-          id="email"
-          placeholder="google@gmail.com"
-          v-model="v$.email.$model"
-        />
-        <div class="default-input__times">&times;</div>
-        <div class="default-input__checkmark">&checkmark;</div>
-        <div
-          class="default-input__message"
-          v-for="(error, index) of v$.email.$errors"
-          :key="index"
-        >
-          {{ error.$message }}
-        </div>
-      </div>
-      <div
-        class="default-input"
-        :class="{
-          'default-input__invalid': v$.password.$dirty && v$.password.$error,
-          'default-input__success': v$.password.$dirty && !v$.password.$error,
-        }"
-      >
-        <label for="password"> Password </label>
-        <input
-          id="password"
-          placeholder="Password"
-          type="password"
-          v-model="v$.password.$model"
-        />
-        <div class="default-input__times">&times;</div>
-        <div class="default-input__checkmark">&checkmark;</div>
-        <div
-          class="default-input__message"
-          v-for="(error, index) of v$.password.$errors"
-          :key="index"
-        >
-          {{ error.$message }}
-        </div>
-      </div>
+      <DefaultInput
+        :id="email"
+        :label="'Email'"
+        :placeholder="'google@gmail.com'"
+        :invalid="v$.email.$dirty && v$.email.$error"
+        :success="v$.email.$dirty && !v$.email.$error"
+        :errorMessage="v$.email.$errors"
+        @updateField="updateEmail"
+      />
+      <DefaultInput
+        :id="password"
+        :label="'Password'"
+        :type="'password'"
+        :placeholder="'Password'"
+        :invalid="v$.password.$dirty && v$.password.$error"
+        :success="v$.password.$dirty && !v$.password.$error"
+        :errorMessage="v$.password.$errors"
+        @updateField="updatePassword"
+      />
       <MainButtons class="sign-up__btn" type="submit">Next step</MainButtons>
     </form>
     <p class="sign-up__text">or signup with</p>
@@ -96,6 +68,7 @@ import useVuelidate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
 import MainButtons from "@/components/default/MainButtons.vue";
 import { mapGetters } from "vuex";
+import DefaultInput from "@/components/default/DefaultInput.vue";
 
 export default {
   computed: mapGetters(["getAllUsers"]),
@@ -109,6 +82,7 @@ export default {
 
   components: {
     MainButtons,
+    DefaultInput,
   },
 
   validations() {
@@ -133,7 +107,7 @@ export default {
         let checkEmail = "";
         for (let key in this.getAllUsers) {
           if (this.getAllUsers[key].email === this.email) {
-            checkEmail = this.getAllUsers[key].email
+            checkEmail = this.getAllUsers[key].email;
           }
         }
         if (checkEmail === this.email) {
@@ -151,6 +125,12 @@ export default {
         }
       }
     },
+    updateEmail(field) {
+      this.email = field;
+    },
+    updatePassword(field) {
+      this.password = field;
+    }
   },
   async mounted() {
     await this.$store.dispatch("fetchUser");

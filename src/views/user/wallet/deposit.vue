@@ -14,77 +14,38 @@
       </div>
       <form class="deposit__form" @submit.prevent="submit">
         <div class="deposit__form-text">Name and last name</div>
-        <div
-          class="default-input deposit__form-input"
-          :class="{
-            'default-input__invalid': v$.name.$dirty && v$.name.$error,
-            'default-input__success': v$.name.$dirty && !v$.name.$error,
-          }"
-        >
-          <input
-            id="name"
-            placeholder="Nikodem Swider"
-            v-model="v$.name.$model"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.name.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
+        <DefaultInput
+          class="deposit__form-input"
+          :id="'name'"
+          :placeholder="'Nikodem Swider'"
+          :invalid="v$.name.$dirty && v$.name.$error"
+          :success="v$.name.$dirty && !v$.name.$error"
+          :errorMessage="v$.name.$errors"
+          @updateField="updateName"
+        />
         <div class="deposit__form-text" v-if="method === 'Card'">Card</div>
-        <div
+        <DefaultInput
+          class="deposit__form-input"
           v-if="method === 'Card'"
-          class="default-input deposit__form-input"
-          :class="{
-            'default-input__invalid': v$.card.$dirty && v$.card.$error,
-            'default-input__success': v$.card.$dirty && !v$.card.$error,
-          }"
-        >
-          <input
-            id="card"
-            type="number"
-            placeholder="0000 0000 0000 0000"
-            v-model="v$.card.$model"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.card.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
+          :id="'card'"
+          :placeholder="'0000 0000 0000 0000'"
+          :type="'number'"
+          :invalid="v$.card.$dirty && v$.card.$error"
+          :success="v$.card.$dirty && !v$.card.$error"
+          :errorMessage="v$.card.$errors"
+          @updateField="updateCard"
+        />
         <div class="deposit__form-text">Amount</div>
-        <div
-          class="default-input deposit__form-input"
-          :class="{
-            'default-input__invalid': v$.amount.$dirty && v$.amount.$error,
-            'default-input__success': v$.amount.$dirty && !v$.amount.$error,
-          }"
-        >
-          <input
-            id="amount"
-            type="number"
-            placeholder="$100"
-            v-model="v$.amount.$model"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.amount.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
+        <DefaultInput
+          class="deposit__form-input"
+          :id="'amount'"
+          :placeholder="'$100'"
+          :type="'number'"
+          :invalid="v$.amount.$dirty && v$.amount.$error"
+          :success="v$.amount.$dirty && !v$.amount.$error"
+          :errorMessage="v$.amount.$errors"
+          @updateField="updateAmount"
+        />
         <MainButtons class="deposit__form-btn">Deposit</MainButtons>
       </form>
     </div>
@@ -98,6 +59,7 @@ import Wallet from "@/views/user/wallet.vue";
 import useVuelidate from "@vuelidate/core";
 import { required, minLength, maxLength } from "@vuelidate/validators";
 import { getDatabase, ref, update } from "firebase/database";
+import DefaultInput from "@/components/default/DefaultInput.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
@@ -115,6 +77,7 @@ export default {
   components: {
     Wallet,
     MainButtons,
+    DefaultInput,
   },
   validations() {
     return {
@@ -183,6 +146,15 @@ export default {
     updateMethod(method) {
       this.method = method;
     },
+    updateName(field){
+      this.name = field;
+    },
+    updateCard(field){
+      this.card = field;
+    },
+    updateAmount(field){
+      this.amount = field;
+    },
   },
 };
 </script>
@@ -233,12 +205,12 @@ export default {
   max-width: 160px;
   margin: 0 auto;
 }
-.deposit__form-input input::-webkit-outer-spin-button,
-.deposit__form-input input::-webkit-inner-spin-button {
+.deposit__form-input::-webkit-outer-spin-button,
+.deposit__form-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.deposit__form-input input[type="number"] {
+.deposit__form-input[type="number"] {
   -moz-appearance: textfield;
 }
 .default-input .default-input__checkmark,

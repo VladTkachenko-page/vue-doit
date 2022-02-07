@@ -3,55 +3,25 @@
     <div class="change-email">
       <h2 class="change-email__title title">Change email address</h2>
       <form class="change-email__form" @submit.prevent="submit">
-        <div
-          class="default-input"
-          :class="{
-            'default-input__invalid': v$.password.$dirty && v$.password.$error,
-            'default-input__success': v$.password.$dirty && !v$.password.$error,
-          }"
-        >
-          <label for="password"> Password </label>
-          <input
-            id="password"
-            placeholder="Password"
-            type="password"
-            v-model="v$.password.$model"
-            autocomplete="off"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.password.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
-        <div
-          class="default-input"
-          :class="{
-            'default-input__invalid': v$.email.$dirty && v$.email.$error,
-            'default-input__success': v$.email.$dirty && !v$.email.$error,
-          }"
-        >
-          <label for="email"> New Email </label>
-          <input
-            id="email"
-            placeholder="google@gmail.com"
-            v-model="v$.email.$model"
-            autocomplete="off"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.email.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
+        <DefaultInput
+          :id="'password'"
+          :label="'Current Password'"
+          :type="'password'"
+          :placeholder="'Current Password'"
+          :invalid="v$.password.$dirty && v$.password.$error"
+          :success="v$.password.$dirty && !v$.password.$error"
+          :errorMessage="v$.password.$errors"
+          @updateField="updatePassword"
+        />
+        <DefaultInput
+          :id="'email'"
+          :label="'New Email'"
+          :placeholder="'Current Password'"
+          :invalid="v$.email.$dirty && v$.email.$error"
+          :success="v$.email.$dirty && !v$.email.$error"
+          :errorMessage="v$.email.$errors"
+          @updateField="updateEmail"
+        />
         <MainButtons class="sign-up__btn" type="submit"
           >Change email</MainButtons
         >
@@ -68,12 +38,14 @@ import useVuelidate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
 import MainButtons from "@/components/default/MainButtons.vue";
 import { getDatabase, ref, update } from "firebase/database";
+import DefaultInput from "@/components/default/DefaultInput.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
   components: {
     UserLayout,
     MainButtons,
+    DefaultInput
   },
   computed: mapGetters(["getUser"]),
   data() {
@@ -116,6 +88,7 @@ export default {
               this.$router.push({
                 path: "/user",
               });
+              this.$toast.success("Your email has been changed");
             })
             .catch((error) => {
               return this.$toast.error(error);
@@ -123,8 +96,13 @@ export default {
         } catch (e) {
           return this.$toast.error(e);
         }
-        this.$toast.success("Your email has been changed");
       }
+    },
+    updatePassword(field) {
+      this.password = field;
+    },
+    updateEmail(field) {
+      this.email = field;
     },
   },
 };

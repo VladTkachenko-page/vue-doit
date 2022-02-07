@@ -6,30 +6,18 @@
     </div>
     <h2 class="forgot__title">Forgot password</h2>
     <form autocomplete="off" @submit.prevent="submit">
-      <div
-        class="default-input"
-        :class="{
-          'default-input__invalid': v$.email.$dirty && v$.email.$error,
-          'default-input__success': v$.email.$dirty && !v$.email.$error,
-        }"
+      <DefaultInput
+        :id="'email'"
+        :placeholder="'google@gmail.com'"
+        :label="'Username or Email'"
+        :invalid="v$.email.$dirty && v$.email.$error"
+        :success="v$.email.$dirty && !v$.email.$error"
+        :errorMessage="v$.email.$errors"
+        @updateField="updateEmail"
+      />
+      <MainButtons class="forgot__btn" type="submit"
+        >Reset password</MainButtons
       >
-        <label for="email"> Username or Email </label>
-        <input
-          id="email"
-          placeholder="google@gmail.com"
-          v-model="v$.email.$model"
-        />
-        <div class="default-input__times">&times;</div>
-        <div class="default-input__checkmark">&checkmark;</div>
-        <div
-          class="default-input__message"
-          v-for="(error, index) of v$.email.$errors"
-          :key="index"
-        >
-          {{ error.$message }}
-        </div>
-      </div>
-      <MainButtons class="forgot__btn" type="submit">Reset password</MainButtons>
     </form>
     <p>
       <router-link class="forgot__link" to="/login">Back to login</router-link>
@@ -77,6 +65,9 @@ export default {
         this.v$.$touch();
         return;
       }
+    },
+    updateEmail(field) {
+      this.email = field;
     },
   },
 };

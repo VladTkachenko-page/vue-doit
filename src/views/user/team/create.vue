@@ -7,27 +7,23 @@
         <div class="create-team__form-wrap">
           <div class="create-team__form-title">Basic info</div>
           <p class="create-team__form-text">Team name</p>
-          <div
-            class="default-input"
-            :class="{
-              'default-input__invalid': v$.name.$dirty && v$.name.$error,
-              'default-input__success': v$.name.$dirty && !v$.name.$error,
-            }"
-          >
-            <input id="name" placeholder="Team M8B" v-model="v$.name.$model" />
-            <div class="default-input__times">&times;</div>
-            <div class="default-input__checkmark">&checkmark;</div>
-            <div
-              class="default-input__message"
-              v-for="(error, index) of v$.name.$errors"
-              :key="index"
-            >
-              {{ error.$message }}
-            </div>
-          </div>
+          <DefaultInput
+            :id="'name'"
+            :field="this.name"
+            :placeholder="'Team M8B'"
+            :invalid="v$.name.$dirty && v$.name.$error"
+            :success="v$.name.$dirty && !v$.name.$error"
+            :errorMessage="v$.name.$errors"
+            @updateField="updateName"
+          />
           <p v-if="getTeam" class="create-team__form-text">ID</p>
           <div v-if="getTeam" class="default-input">
-            <input disabled id="name" placeholder="0000000" v-model="id" />
+            <DefaultInput
+              :id="'id'"
+              :disabled="true"
+              :placeholder="'0000000'"
+              :field="this.id"
+            />
           </div>
           <p class="create-team__form-text">Main Game</p>
           <div class="default-country-select">
@@ -46,53 +42,25 @@
             </select>
           </div>
           <p class="create-team__form-text">Team Leader</p>
-          <div
-            class="default-input"
-            :class="{
-              'default-input__invalid': v$.leader.$dirty && v$.leader.$error,
-              'default-input__success': v$.leader.$dirty && !v$.leader.$error,
-            }"
-          >
-            <input
-              id="leader"
-              placeholder="user993"
-              v-model="v$.leader.$model"
-            />
-            <div class="default-input__times">&times;</div>
-            <div class="default-input__checkmark">&checkmark;</div>
-            <div
-              class="default-input__message"
-              v-for="(error, index) of v$.leader.$errors"
-              :key="index"
-            >
-              {{ error.$message }}
-            </div>
-          </div>
+          <DefaultInput
+            :id="'leader'"
+            :placeholder="'user993'"
+            :field="this.leader"
+            :invalid="v$.leader.$dirty && v$.leader.$error"
+            :success="v$.leader.$dirty && !v$.leader.$error"
+            :errorMessage="v$.leader.$errors"
+            @updateField="updateLeader"
+          />
           <p class="create-team__form-text">Join password</p>
-          <div
-            class="default-input"
-            :class="{
-              'default-input__invalid':
-                v$.password.$dirty && v$.password.$error,
-              'default-input__success':
-                v$.password.$dirty && !v$.password.$error,
-            }"
-          >
-            <input
-              id="password"
-              placeholder="123213423"
-              v-model="v$.password.$model"
-            />
-            <div class="default-input__times">&times;</div>
-            <div class="default-input__checkmark">&checkmark;</div>
-            <div
-              class="default-input__message"
-              v-for="(error, index) of v$.password.$errors"
-              :key="index"
-            >
-              {{ error.$message }}
-            </div>
-          </div>
+          <DefaultInput
+            :id="'password'"
+            :placeholder="'123213423'"
+            :field="this.password"
+            :invalid="v$.password.$dirty && v$.password.$error"
+            :success="v$.password.$dirty && !v$.password.$error"
+            :errorMessage="v$.password.$errors"
+            @updateField="updatePassword"
+          />
           <p class="create-team__form-text">Country</p>
           <div
             class="default-country-select"
@@ -118,13 +86,12 @@
             </div>
           </div>
           <p class="create-team__form-text">Web-site</p>
-          <div class="default-input">
-            <input
-              id="website"
-              placeholder="TeamBlacer.com"
-              v-model="website"
-            />
-          </div>
+          <DefaultInput
+            :id="'name'"
+            :field="this.website"
+            :placeholder="'TeamBlacer.com'"
+            @updateField="updateWebsite"
+          />
           <p class="create-team__form-text">URL</p>
           <div class="create-team__form-url">doit.gg/team/{{ this.id }}</div>
         </div>
@@ -227,6 +194,7 @@ import { required, minLength } from "@vuelidate/validators";
 import UserLayout from "@/layouts/UserLayout.vue";
 import { db, refDb, updateDb, removeDb } from "@/firebase.js";
 import modal from "@/components/modal.vue";
+import DefaultInput from "@/components/default/DefaultInput.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
@@ -236,6 +204,7 @@ export default {
     UserLayout,
     MainButtons,
     DefaultFileinput,
+    DefaultInput,
     modal,
   },
 
@@ -364,6 +333,18 @@ export default {
     },
     uploadImg(img) {
       this.img = img;
+    },
+    updatePassword(field) {
+      this.password = field;
+    },
+    updateName(field) {
+      this.name = field;
+    },
+    updateLeader(field) {
+      this.leader = field;
+    },
+    updateWebsite(field) {
+      this.website = field;
     },
     toggleList() {
       this.listPlayer = !this.listPlayer;

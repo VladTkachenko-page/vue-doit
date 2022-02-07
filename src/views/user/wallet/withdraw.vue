@@ -14,76 +14,36 @@
       </div>
       <form class="withdraw__form" @submit.prevent="submit">
         <div class="withdraw__form-text">Name and last name</div>
-        <div
-          class="default-input withdraw__form-input"
-          :class="{
-            'default-input__invalid': v$.name.$dirty && v$.name.$error,
-            'default-input__success': v$.name.$dirty && !v$.name.$error,
-          }"
-        >
-          <input
-            id="name"
-            placeholder="Nikodem Swider"
-            v-model="v$.name.$model"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.name.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
+        <DefaultInput
+          class="withdraw__form-input"
+          :id="'name'"
+          :placeholder="'Nikodem Swider'"
+          :invalid="v$.name.$dirty && v$.name.$error"
+          :success="v$.name.$dirty && !v$.name.$error"
+          :errorMessage="v$.name.$errors"
+          @updateField="updateName"
+        />
         <div class="withdraw__form-text">Your email address</div>
-        <div
-          class="default-input withdraw__form-input"
-          :class="{
-            'default-input__invalid': v$.email.$dirty && v$.email.$error,
-            'default-input__success': v$.email.$dirty && !v$.email.$error,
-          }"
-        >
-          <input
-            id="email"
-            placeholder="google@gmail.com"
-            v-model="v$.email.$model"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.email.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
+        <DefaultInput
+          class="withdraw__form-input"
+          :id="'email'"
+          :placeholder="'google@gmail.com'"
+          :invalid="v$.email.$dirty && v$.email.$error"
+          :success="v$.email.$dirty && !v$.email.$error"
+          :errorMessage="v$.email.$errors"
+          @updateField="updateEmail"
+        />
         <div class="withdraw__form-text">Amount</div>
-        <div
-          class="default-input withdraw__form-input"
-          :class="{
-            'default-input__invalid': v$.amount.$dirty && v$.amount.$error,
-            'default-input__success': v$.amount.$dirty && !v$.amount.$error,
-          }"
-        >
-          <input
-            id="amount"
-            type="number"
-            placeholder="$100"
-            v-model="v$.amount.$model"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.amount.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-          <div class="withdraw__doit" v-if="method === 'DOIT'">100 DOIT = 1$</div>
-        </div>
+        <DefaultInput
+          class="withdraw__form-input"
+          :id="'amount'"
+          :placeholder="'$100'"
+          :type="'number'"
+          :invalid="v$.amount.$dirty && v$.amount.$error"
+          :success="v$.amount.$dirty && !v$.amount.$error"
+          :errorMessage="v$.amount.$errors"
+          @updateField="updateAmount"
+        />
         <MainButtons class="withdraw__form-btn">Withdraw</MainButtons>
       </form>
     </div>
@@ -97,6 +57,7 @@ import Wallet from "@/views/user/wallet.vue";
 import useVuelidate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
 import { getDatabase, ref, update } from "firebase/database";
+import DefaultInput from "@/components/default/DefaultInput.vue";
 
 export default {
   computed: mapGetters(["getUser"]),
@@ -114,6 +75,7 @@ export default {
   components: {
     Wallet,
     MainButtons,
+    DefaultInput,
   },
 
   validations() {
@@ -199,6 +161,15 @@ export default {
     updateMethod(method) {
       this.method = method;
     },
+    updateName(field) {
+      this.name = field;
+    },
+    updateEmail(field) {
+      this.email = field;
+    },
+    updateAmount(field) {
+      this.amount = field;
+    },
   },
 };
 </script>
@@ -244,14 +215,6 @@ export default {
 }
 .withdraw__form-input {
   margin-bottom: 16px;
-}
-.withdraw__form-input input::-webkit-outer-spin-button,
-.withdraw__form-input input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.withdraw__form-input input[type="number"] {
-  -moz-appearance: textfield;
 }
 .withdraw__form-btn {
   max-width: 160px;

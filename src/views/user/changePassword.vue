@@ -1,60 +1,28 @@
 <template>
   <UserLayout>
     <div class="change-email">
-      <h2 class="change-email__title title">Change email address</h2>
+      <h2 class="change-email__title title">Change Password</h2>
       <form class="change-email__form" @submit.prevent="submit">
-        <div
-          class="default-input"
-          :class="{
-            'default-input__invalid': v$.password.$dirty && v$.password.$error,
-            'default-input__success': v$.password.$dirty && !v$.password.$error,
-          }"
-        >
-          <label for="password"> Current password </label>
-          <input
-            id="password"
-            placeholder="Current password"
-            type="password"
-            v-model="v$.password.$model"
-            autocomplete="off"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.password.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
-        <div
-          class="default-input"
-          :class="{
-            'default-input__invalid':
-              v$.newPassword.$dirty && v$.newPassword.$error,
-            'default-input__success':
-              v$.newPassword.$dirty && !v$.newPassword.$error,
-          }"
-        >
-          <label for="newPassword"> Password </label>
-          <input
-            id="newPassword"
-            placeholder="Password"
-            type="password"
-            v-model="v$.newPassword.$model"
-            autocomplete="off"
-          />
-          <div class="default-input__times">&times;</div>
-          <div class="default-input__checkmark">&checkmark;</div>
-          <div
-            class="default-input__message"
-            v-for="(error, index) of v$.newPassword.$errors"
-            :key="index"
-          >
-            {{ error.$message }}
-          </div>
-        </div>
+        <DefaultInput
+          :id="'password'"
+          :label="'Current Password'"
+          :type="'password'"
+          :placeholder="'Current Password'"
+          :invalid="v$.password.$dirty && v$.password.$error"
+          :success="v$.password.$dirty && !v$.password.$error"
+          :errorMessage="v$.password.$errors"
+          @updateField="updatePassword"
+        />
+        <DefaultInput
+          :id="'newPassword'"
+          :label="'Password'"
+          :type="'password'"
+          :placeholder="'Password'"
+          :invalid="v$.newPassword.$dirty && v$.newPassword.$error"
+          :success="v$.newPassword.$dirty && !v$.newPassword.$error"
+          :errorMessage="v$.newPassword.$errors"
+          @updateField="updateNewPassword"
+        />
         <MainButtons class="sign-up__btn" type="submit"
           >Change Password</MainButtons
         >
@@ -71,12 +39,14 @@ import useVuelidate from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import MainButtons from "@/components/default/MainButtons.vue";
 import { getDatabase, ref, update } from "firebase/database";
+import DefaultInput from "@/components/default/DefaultInput.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
   components: {
     UserLayout,
     MainButtons,
+    DefaultInput,
   },
   computed: mapGetters(["getUser"]),
   data() {
@@ -110,7 +80,7 @@ export default {
         }
         try {
           const auth = getAuth();
-          updatePassword(auth.currentUser, this.newPassword)
+          await updatePassword(auth.currentUser, this.newPassword)
             .then(async () => {
               const db = getDatabase();
               update(ref(db, "users/" + this.getUser.uid), {
@@ -119,6 +89,7 @@ export default {
               this.$router.push({
                 path: "/user",
               });
+              this.$toast.success("Your password has been changed");
             })
             .catch((error) => {
               return this.$toast.error(error);
@@ -126,8 +97,13 @@ export default {
         } catch (e) {
           return this.$toast.error(e);
         }
-        this.$toast.success("Your password has been changed");
       }
+    },
+    updatePassword(field) {
+      this.password = field;
+    },
+    updateNewPassword(field) {
+      this.newPassword = field;
     },
   },
 };

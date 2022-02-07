@@ -5,29 +5,15 @@
     </div>
     <h2 class="sign-up__title">Sign up 2/2</h2>
     <form autocomplete="off" @submit.prevent="submit">
-      <div
-        class="default-input"
-        :class="{
-          'default-input__invalid': v$.login.$dirty && v$.login.$error,
-          'default-input__success': v$.login.$dirty && !v$.login.$error,
-        }"
-      >
-        <label for="login"> Username </label>
-        <input
-          id="login"
-          placeholder="BestPlayerInTheWorld2020"
-          v-model="v$.login.$model"
-        />
-        <div class="default-input__times">&times;</div>
-        <div class="default-input__checkmark">&checkmark;</div>
-        <div
-          class="default-input__message"
-          v-for="(error, index) of v$.login.$errors"
-          :key="index"
-        >
-          {{ error.$message }}
-        </div>
-      </div>
+      <DefaultInput
+        :id="login"
+        :label="'Username'"
+        :placeholder="'BestPlayerInTheWorld2020'"
+        :invalid="v$.login.$dirty && v$.login.$error"
+        :success="v$.login.$dirty && !v$.login.$error"
+        :errorMessage="v$.login.$errors"
+        @updateField="updateLogin"
+      />
       <div
         class="default-country-select"
         :class="{
@@ -156,6 +142,7 @@ import useVuelidate from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import MainButtons from "@/components/default/MainButtons.vue";
 import { DatePicker } from "v-calendar";
+import DefaultInput from "@/components/default/DefaultInput.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
@@ -174,6 +161,7 @@ export default {
   },
 
   components: {
+    DefaultInput,
     MainButtons,
     DatePicker,
   },
@@ -275,6 +263,9 @@ export default {
         alert(eMessage);
       }
     },
+    updateLogin(field) {
+      this.login = field;
+    },
   },
   mounted() {
     let options = document.querySelectorAll("option");
@@ -334,5 +325,120 @@ form {
 }
 .default-country-select_style {
   width: 264px;
+}
+.default-input {
+  position: relative;
+  width: 100%;
+}
+.default-input label {
+  font-size: 14px;
+  font-weight: 400;
+}
+.default-input input {
+  padding: 12px 16px;
+  color: #627ca3;
+  background-color: rgba(0, 0, 0, 0);
+  width: 100%;
+  height: 40px;
+  border: 1px solid #16263d;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-color: #0f1215;
+}
+.default-input input::placeholder {
+  font-family: "Rubik";
+  font-size: 14px;
+  line-height: 100%;
+  color: #627ca3;
+  margin: 10px 0px;
+}
+.default-input input:focus {
+  color: #627ca3;
+  background: #121f33;
+  border: 1px solid #627ca3;
+  border-radius: 2px;
+}
+.default-input input:active {
+  color: #e6e6e6;
+  background: #16263d;
+  border: 1px solid #185ec7;
+  border-radius: 2px;
+}
+.default-input input:disabled {
+  color: #98a4b5;
+  background: #121f33;
+  border-radius: 2px;
+}
+.default-input input:-webkit-autofill {
+  background-color: transparent;
+}
+.default-input .default-input__message {
+  display: none;
+}
+.default-input .default-input__times {
+  display: none;
+}
+.default-input .default-input__checkmark {
+  display: none;
+}
+.default-input__invalid input {
+  border: 1px solid #b83333;
+  border-radius: 2px;
+}
+.default-input__invalid input:active {
+  border: 1px solid #b83333;
+  border-radius: 2px;
+}
+.default-input__invalid input:focus {
+  border: 1px solid #b83333;
+  border-radius: 2px;
+}
+.default-input__invalid .default-input__times {
+  display: block;
+  color: #b83333;
+  position: absolute;
+  font-size: 32px;
+  right: 10px;
+  top: 20px;
+}
+.default-input__invalid .default-input__message {
+  display: block;
+  font-size: 12px;
+  color: #b83333;
+  margin: 4px 0px;
+}
+.default-input__invalid .default-input__checkmark {
+  display: none;
+}
+.default-input__success input {
+  border: 1px solid #4cb725;
+  border-radius: 2px;
+}
+.default-input__success input:active {
+  border: 1px solid #4cb725;
+  border-radius: 2px;
+}
+.default-input__success input:focus {
+  border: 1px solid #4cb725;
+  border-radius: 2px;
+}
+.default-input__success .default-input__checkmark {
+  display: block;
+  color: #4cb725;
+  position: absolute;
+  font-size: 24px;
+  right: 10px;
+  top: 20px;
+}
+.default-input__success .default-input__times {
+  display: none;
+}
+.default-input__success .default-input__message {
+  display: none;
+}
+.default-input__icon {
+  position: absolute;
+  padding: 9px;
+  right: 0;
 }
 </style>
