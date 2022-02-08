@@ -93,7 +93,11 @@
             @updateField="updateWebsite"
           />
           <p class="create-team__form-text">URL</p>
-          <div class="create-team__form-url">doit.gg/team/{{ this.id }}</div>
+          <DefaultInput
+            :id="'teamPath'"
+            :disabled="true"
+            :field="'doit.gg/team/' + this.id"
+          />
         </div>
         <div class="create-team__form-wrap" v-if="getTeam">
           <div class="create-team__form-title">Players</div>
