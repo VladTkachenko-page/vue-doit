@@ -173,6 +173,13 @@ const routes = [
     props: true,
     component: () => import("@/views/leagues/game.vue"),
   },
+  {
+    path: "/admin/game/",
+    name: "admin-game",
+    meta: { layout: "main" },
+    props: true,
+    component: () => import("@/views/admin/newGame.vue"),
+  },
 ];
 
 const router = createRouter({
