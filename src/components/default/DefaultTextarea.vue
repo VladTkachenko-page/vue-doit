@@ -6,11 +6,7 @@
       'default-input__invalid': fail,
     }"
   >
-    <textarea
-      :placeholder="placeholder"
-      v-model="input"
-      @input="updateField"
-    />
+    <textarea :placeholder="placeholder" v-model="input" @input="updateField" />
     <div class="default-input__times">&times;</div>
     <div class="default-input__checkmark">&checkmark;</div>
     <div
