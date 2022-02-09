@@ -4,6 +4,11 @@
       <div class="games__search_title title">
         <h3>Games</h3>
       </div>
+      <MainButtons
+        @click="this.$router.push(`/admin/game/${new Date().getTime()}`)"
+      >
+        New Game
+      </MainButtons>
       <DefaultInput
         class="games__search_input"
         :id="'searchGame'"
@@ -13,12 +18,18 @@
     </div>
 
     <div class="games__wrap">
-      <div class="game-card" v-for="game in foundItems" :key="game.id">
+      <div
+        class="game-card"
+        v-for="game in foundItems"
+        :key="game.id"
+        @click="this.$router.push(`/admin/game/${game.id}`)"
+      >
         <div class="game-card__img">
-          <img src="../assets/img/dota.jpg" alt="" />
+          <img :src="game.imgSRC" alt="" />
           <span class="game-card__caption">{{ game.title }}</span>
         </div>
       </div>
+
       <div class="games__none title" v-if="foundItems.length === 0">
         Games not found
       </div>
@@ -27,43 +38,41 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import DefaultInput from "@/components/default/DefaultInput.vue";
+import MainButtons from "@/components/default/MainButtons.vue";
+import { db, refDb, onValueDb } from "../firebase.js";
 
 export default {
   data() {
     return {
       searchGame: "",
-      games: [
-        {
-          id: 1,
-          title: "Dota II",
-          src: "../src/assets/img/dota.jpg",
-        },
-        {
-          id: 2,
-          title: "CS:GO",
-        },
-        {
-          id: 3,
-          title: "StarCraft II",
-        },
-        {
-          id: 4,
-          title: "WarCraft III",
-        },
-        {
-          id: 5,
-          title: "FIFA 2020",
-        },
-        {
-          id: 6,
-          title: "Valorant",
-        },
-      ],
+      games: [],
     };
   },
 
+  async mounted() {
+    try {
+      await this.$store.commit("setShowloader", true);
+      const dbRef = refDb(db, "games");
+      await onValueDb(dbRef, (snapshot) => {
+        try {
+          const data = snapshot.val();
+          Object.keys(data).forEach((item) => {
+            this.games.push(data[item]);
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    await this.$store.commit("setShowloader", false);
+  },
+
   computed: {
+    ...mapGetters(["getAllGames", "getCheckLoading"]),
     foundItems() {
       return this.games.filter((item) =>
         item.title
@@ -76,8 +85,8 @@ export default {
 
   components: {
     DefaultInput,
+    MainButtons,
   },
-  mounted() {},
 
   methods: {
     updateSearchGame(field) {
