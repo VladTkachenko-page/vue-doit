@@ -2,25 +2,17 @@ import { createStore } from "vuex";
 import auth from "./modules/auth";
 import user from "./modules/user";
 import team from "./modules/team";
+import game from "./modules/game";
 
 export default createStore({
-  state: {
-    showloader: true,
-  },
-  mutations: {
-    setShowloader(state, bool) {
-      state.showloader = bool;
-    },
-  },
+  state: {},
+  mutations: {},
   actions: {},
-  getters: {
-    getCheckLoading(state) {
-      return state.showloader;
-    },
-  },
+  getters: {},
   modules: {
     auth,
     user,
     team,
+    game,
   },
 });

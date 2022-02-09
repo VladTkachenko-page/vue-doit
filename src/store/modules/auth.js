@@ -6,6 +6,10 @@ import {
 import { db, refDb, setDb } from "../../firebase.js";
 
 export default {
+  state: {
+    showloader: true,
+  },
+
   actions: {
     async login({ commit }, { email, password }) {
       const auth = getAuth();
@@ -51,4 +55,14 @@ export default {
       await auth.signOut();
     },
   },
+  mutations: {
+    setShowloader(state, bool) {
+      state.showloader = bool;
+    },
+  },
+  getters: {
+    getCheckLoading(state) {
+      return state.showloader;
+    },
+  }
 };
