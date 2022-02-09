@@ -8,6 +8,7 @@
           <p class="games-edit__form-text">Game name</p>
           <DefaultInput
             :placeholder="'Game name'"
+            :field="title"
             :invalid="v$.title.$dirty && v$.title.$error"
             :success="v$.title.$dirty && !v$.title.$error"
             :errorMessage="v$.title.$errors"
@@ -24,49 +25,56 @@
         <DefaultTextarea
           class="games-edit__form-input"
           :placeholder="'You can write here somebody about your tournament....'"
+          :field="description"
           @updateField="updateDescription"
         />
       </div>
       <div class="games-edit__form-wrap">
         <div class="games-edit__form-title">Capsules</div>
         <div class="games-edit__form-file">
-          <p class="games-edit__form-text">Main Banner 387x500</p>
+          <p class="games-edit__form-text">Main Banner 387x500*</p>
           <DefaultFileinput
             name="banner url"
             :img="imgSRC"
             @uploadFile="uploadMainBannerImg"
           />
-          <p class="games-edit__fail-message" v-if="v$.img.$error">
-            Field is required
-          </p>
+          <div v-if="!getGame">
+            <p class="games-edit__fail-message" v-if="v$.img.$error">
+              Value is required
+            </p>
+          </div>
         </div>
-        <p class="games-edit__form-text">Mobile Banner 329x129*</p>
+        <p class="games-edit__form-text">Mobile Banner 329x129</p>
         <DefaultFileinput
           name="banner url"
           :img="mobileBannerImgSRC"
           @uploadFile="uploadMobileBannerImg"
         />
         <div class="games-edit__form-file">
-          <p class="games-edit__form-text">Game icon 32x32</p>
+          <p class="games-edit__form-text">Game icon 32x32*</p>
           <DefaultFileinput
             name="icon url"
             :img="gameIconImgSRC"
             @uploadFile="uploadGameIconImg"
           />
-          <p class="games-edit__fail-message" v-if="v$.gameIconImg.$error">
-            Field is required
-          </p>
+          <div v-if="!getGame">
+            <p class="games-edit__fail-message" v-if="v$.gameIconImg.$error">
+              Value is required
+            </p>
+          </div>
         </div>
         <div class="games-edit__form-file">
-          <p class="games-edit__form-text">Game logo 64x64</p>
+          <p class="games-edit__form-text">Game logo 64x64*</p>
           <DefaultFileinput
             name="logo url"
             :img="gameLogoImgSRC"
             @uploadFile="uploadGameLogoImg"
           />
-          <p class="games-edit__fail-message" v-if="v$.gameLogoImg.$error">
-            Field is required
-          </p>
+          <div v-if="!getGame">
+            <p class="games-edit__fail-message" v-if="v$.gameLogoImg.$error">
+              Value is required
+            </p>
+          </div>
         </div>
         <p class="games-edit__form-text">Game background 2206x2278</p>
         <DefaultFileinput
@@ -85,12 +93,6 @@
             name="TournamentSystem"
             @updateRadioSelect="updateTournamentsActive"
           />
-          <p
-            class="games-edit__fail-message"
-            v-if="v$.tournamentsActive.$error"
-          >
-            Field is required
-          </p>
         </div>
         <div
           class="games-edit__form-item"
@@ -115,6 +117,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import useVuelidate from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
 import DefaultInput from "@/components/default/DefaultInput.vue";
@@ -125,6 +128,7 @@ import MainButtons from "@/components/default/MainButtons.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
+  computed: mapGetters(["getGame"]),
   data() {
     return {
       id: "",
@@ -135,7 +139,11 @@ export default {
       gameIconImg: "",
       gameLogoImg: "",
       backgroundImg: "",
-      new: false,
+      imgSRC: "",
+      mobileBannerImgSRC: "",
+      gameIconImgSRC: "",
+      gameLogoImgSRC: "",
+      backgroundImgSRC: "",
       selectArray: {
         0: {
           title: "No",
@@ -144,6 +152,7 @@ export default {
           title: "Yes",
         },
       },
+      tournamentsActive: "",
     };
   },
 
@@ -155,24 +164,72 @@ export default {
     DefaultRadio,
   },
 
-  mounted() {
+  async mounted() {
     this.id = this.$attrs.id;
+    await this.$store.commit("setShowloader", true);
+    await this.$store.dispatch("fetchGame", this.$attrs.id);
+    if (this.getGame) {
+      this.title = this.getGame.title;
+      this.description = this.getGame.description;
+      this.imgSRC = this.getGame.imgSRC;
+      this.mobileBannerImgSRC = this.getGame.mobileBannerImgSRC;
+      this.gameIconImgSRC = this.getGame.gameIconImgSRC;
+      this.gameLogoImgSRC = this.getGame.gameLogoImgSRC;
+      this.backgroundImgSRC = this.getGame.backgroundImgSRC;
+    }
+    await this.$store.commit("setShowloader", false);
   },
   validations() {
-    return {
-      title: {
-        required,
-        minLength: minLength(2),
-      },
-      img: { required },
-      gameIconImg: { required },
-      gameLogoImg: { required },
-      tournamentsActive: { required },
-    };
+    if (!this.getGame) {
+      return {
+        title: {
+          required,
+          minLength: minLength(2),
+        },
+        img: { required },
+        gameIconImg: { required },
+        gameLogoImg: { required },
+      };
+    } else {
+      return {
+        title: {
+          required,
+          minLength: minLength(2),
+        },
+      };
+    }
   },
 
   methods: {
-    async submit() {},
+    async submit() {
+      if (this.v$.$invalid) {
+        this.v$.$touch();
+        return;
+      } else {
+        const game = {
+          id: this.id,
+          title: this.title,
+          description: this.description,
+          img: this.img,
+          mobileBannerImg: this.mobileBannerImg,
+          gameIconImg: this.gameIconImg,
+          gameLogoImg: this.gameLogoImg,
+          backgroundImg: this.backgroundImg,
+        };
+        try {
+          await this.$store.commit("setShowloader", true);
+          await this.$store.dispatch("updateGame", game);
+          await this.$store.commit("setShowloader", false);
+        } catch (e) {
+          return this.$toast.error(e);
+        }
+        if (this.getGame) {
+          this.$toast.success("Game has been updated");
+        } else {
+          this.$toast.success("Game has been created");
+        }
+      }
+    },
     deleteGame() {
       const gameDelete = {
         id: this.id,
