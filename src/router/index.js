@@ -174,7 +174,7 @@ const routes = [
     component: () => import("@/views/leagues/game.vue"),
   },
   {
-    path: "/admin/game/",
+    path: "/admin/game/:id",
     name: "admin-game",
     meta: { layout: "main" },
     props: true,
