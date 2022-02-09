@@ -69,7 +69,7 @@ export default {
       state.team = team;
     },
     setAllTeams(state, teams) {
-      state.allteams = teams;
+      state.allTeams = teams;
     },
     error(state, error) {
       console.log(error);
