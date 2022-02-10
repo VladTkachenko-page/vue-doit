@@ -75,10 +75,7 @@ export default {
     ...mapGetters(["getAllGames", "getCheckLoading"]),
     foundItems() {
       return this.games.filter((item) =>
-        item.title
-          .toString()
-          .toLowerCase()
-          .includes(this.searchGame.toLowerCase())
+        item.title.toLowerCase().includes(this.searchGame.toLowerCase())
       );
     },
   },
@@ -124,7 +121,7 @@ export default {
 .game-card__img {
   position: relative;
   max-width: 387px;
-  max-height: 500px;
+  height: 500px;
 }
 .game-card__img img {
   width: 100%;
