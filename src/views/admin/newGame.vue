@@ -103,7 +103,7 @@
       </div>
       <div class="games-edit__form-btns">
         <MainButtons
-          @click="deleteGame"
+          @click="showModal = true"
           class="games-edit__form-btn secondary"
           type="button"
           >Delete Game</MainButtons
@@ -114,6 +114,22 @@
       </div>
     </form>
   </div>
+  <modal v-if="showModal" @close="closeModal">
+    <template v-slot:header>
+      <h1>Delete Game</h1>
+    </template>
+    <template v-slot:body>
+      <p>Are you sure you want to delete {{ getGame.title }}?</p>
+    </template>
+    <template v-slot:footer>
+      <div class="edit-team__btn" @click="closeModal">
+        <MainButtons class="secondary">No</MainButtons>
+      </div>
+      <div class="edit-team__btn" @click="deleteGame">
+        <MainButtons>Yes</MainButtons>
+      </div>
+    </template>
+  </modal>
 </template>
 
 <script>
@@ -125,6 +141,7 @@ import DefaultRadio from "@/components/default/DefaultRadio.vue";
 import DefaultFileinput from "@/components/default/DefaultFileinput.vue";
 import DefaultTextarea from "@/components/default/DefaultTextarea.vue";
 import MainButtons from "@/components/default/MainButtons.vue";
+import modal from "@/components/modal.vue";
 
 export default {
   setup: () => ({ v$: useVuelidate() }),
@@ -153,6 +170,7 @@ export default {
         },
       },
       tournamentsActive: "",
+      showModal: false,
     };
   },
 
@@ -162,6 +180,7 @@ export default {
     DefaultInput,
     DefaultFileinput,
     DefaultRadio,
+    modal
   },
 
   async mounted() {
@@ -209,7 +228,7 @@ export default {
         const game = {
           id: this.id,
           title: this.title,
-          description: this.description,
+          description: this.description || "",
           img: this.img,
           mobileBannerImg: this.mobileBannerImg,
           gameIconImg: this.gameIconImg,
@@ -220,6 +239,7 @@ export default {
           await this.$store.commit("setShowloader", true);
           await this.$store.dispatch("updateGame", game);
           await this.$store.commit("setShowloader", false);
+          this.$router.push("/games");
         } catch (e) {
           return this.$toast.error(e);
         }
@@ -230,12 +250,18 @@ export default {
         }
       }
     },
-    deleteGame() {
-      const gameDelete = {
-        id: this.id,
-      };
-      console.log("gameDelete: ", gameDelete);
+    async deleteGame() {
+      try {
+        await this.$store.dispatch("deleteGame", this.getGame);
+        this.showModal = false;
+        this.getGame = null;
+      } catch (e) {
+        return this.$toast.error(e);
+      }
+      this.$toast.success("Game has been deleted");
+      this.$router.push("/games");
     },
+
     updateTitle(field) {
       this.title = field;
     },

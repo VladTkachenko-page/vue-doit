@@ -109,15 +109,51 @@ export default {
           });
       }
     },
-    async deleteTeam({ commit }, teamData) {
+    async deleteGame({ commit }, gameData) {
       try {
-        removeDb(refDb(db, "teams/" + teamData.id));
+        removeDb(refDb(db, "games/" + gameData.id));
       } catch (e) {
         commit("error", e);
       }
-      if (teamData.imgSRC) {
+      if (gameData.imgSRC) {
         const storage = getStorage();
-        const storageRef = ref(storage, `teams/${teamData.id}/` + teamData.id);
+        const storageRef = ref(storage, `games/${gameData.id}/main-banner`);
+        await deleteObject(storageRef)
+          .then(() => {})
+          .catch((error) => {
+            console.log("error: ", error);
+          });
+      }
+      if (gameData.mobileBannerImgSRC) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `games/${gameData.id}/mobile-banner`);
+        await deleteObject(storageRef)
+          .then(() => {})
+          .catch((error) => {
+            console.log("error: ", error);
+          });
+      }
+      if (gameData.gameIconImgSRC) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `games/${gameData.id}/game-icon`);
+        await deleteObject(storageRef)
+          .then(() => {})
+          .catch((error) => {
+            console.log("error: ", error);
+          });
+      }
+      if (gameData.gameLogoImgSRC) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `games/${gameData.id}/game-logo`);
+        await deleteObject(storageRef)
+          .then(() => {})
+          .catch((error) => {
+            console.log("error: ", error);
+          });
+      }
+      if (gameData.backgroundImgSRC) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `games/${gameData.id}/background`);
         await deleteObject(storageRef)
           .then(() => {})
           .catch((error) => {
