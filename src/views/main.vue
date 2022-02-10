@@ -27,7 +27,7 @@
           >
             <div class="game-card">
               <div class="game-card__img">
-                <img src="../assets/img/dota.jpg" alt="" />
+                <img :src="item.imgSRC" alt="" />
                 <span class="game-card__caption">{{ item.title }}</span>
               </div>
             </div>
@@ -43,39 +43,14 @@ import MainButtons from "@/components/default/MainButtons.vue";
 import DefaultSlider from "@/components/default/DefaultSlider.vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { SwiperSlide } from "swiper/vue/swiper-vue";
+import { db, refDb, onValueDb } from "../firebase.js";
 
 export default {
   data() {
     return {
       auth: getAuth(),
       user: false,
-      games: [
-        {
-          id: 1,
-          title: "Dota II",
-          src: "../src/assets/img/dota.jpg",
-        },
-        {
-          id: 2,
-          title: "CS:GO",
-        },
-        {
-          id: 3,
-          title: "StarCraft II",
-        },
-        {
-          id: 4,
-          title: "WarCraft III",
-        },
-        {
-          id: 5,
-          title: "FIFA 2020",
-        },
-        {
-          id: 6,
-          title: "Valorant",
-        },
-      ],
+      games: [],
     };
   },
   components: {
@@ -91,6 +66,23 @@ export default {
         this.user = false;
       }
     });
+    try {
+      await this.$store.commit("setShowloader", true);
+      const dbRef = refDb(db, "games");
+      await onValueDb(dbRef, (snapshot) => {
+        try {
+          const data = snapshot.val();
+          Object.keys(data).forEach((item) => {
+            this.games.push(data[item]);
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    await this.$store.commit("setShowloader", false);
   },
 };
 </script>
